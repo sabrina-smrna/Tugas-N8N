@@ -1,0 +1,68 @@
+{
+  "name": "My workflow 6",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6546eb86-4833-4966-85ae-187d99c48586",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1342204029",
+        "text": "=⚠️ Workflow Error Detected!  Nama Workflow: {{$json.workflow.name}}  \nWaktu Eksekusi: {{$now}}  \nNode Penyebab Error: {{$json.execution.lastNodeExecuted}}  \nPesan Error: {{$json.execution.error.message}}  \nLink Eksekusi: {{$json.execution.url}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "5a77649c-aaad-4a32-a079-3a8c70cde451",
+      "name": "Send a text message",
+      "webhookId": "97860084-8550-4e5f-a2c8-b6243b977b20",
+      "credentials": {
+        "telegramApi": {
+          "id": "mgM1hW9AIXg1CQJn",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "gEWNf9S2rldi5UrB",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "93a439be-bafd-4eb2-a4c5-a8c76ac72387",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "94e417dcf5f973d4e19006fc6970012180f80c5acde6b4ce80348d8168a83c52"
+  },
+  "id": "gEWNf9S2rldi5UrB",
+  "tags": []
+}
