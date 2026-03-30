@@ -1,0 +1,162 @@
+{
+  "name": "chatbot_tugas3",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu asisten pelatihan NF Academy, yang siap menjawab pertanyaan dengan baik\nsesuai dengan bahasa yang digunakan penanya.\nJawablah pertanyaan tentang produk, deskripsi/uraian, biaya/harga, dan\ntempat/lokasi pelatihan sesuai dengan informasi yang tersedia dalam Tool Get\nrow(s) in sheet in Google Sheets\nJika kamu tidak menemukan informasi produk, harga, dan tempat pelatihan, jangan\nmengarang jawaban. Berikan jawaban, \"Maaf, saya belum memiliki data yang Anda\nminta. Silakan lihat web nfacademy.id\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        208
+      ],
+      "id": "e33cbf2a-e39d-4b69-8b5d-16de7b5fbe31",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-safeguard-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        208,
+        416
+      ],
+      "id": "4ae3a916-71e9-40b1-9892-7a9c290e2067",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "vVdwOqYXn8bG0i8e",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        464
+      ],
+      "id": "d08b5e83-0910-4dca-8c74-69a6a5c64b22",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is naa. How can I assist you today?",
+        "options": {
+          "customCss": "/* =========================\n   SKY Aesthetic UI\n   ========================= */\n\n:root,\n.n8n-chat {\n\n  /* ☁️ sky palette */\n  --chat--color--primary: #74b9ff;\n  --chat--color--primary-shade-50: #63aaf5;\n  --chat--color--primary--shade-100: #4d96e6;\n\n  --chat--color--secondary: #a29bfe;\n  --chat--color-secondary-shade-50: #918af5;\n\n  --chat--color-white: #ffffff;\n  --chat--color-light: #f4f8ff;\n  --chat--color-light-shade-50: #e9f0fb;\n  --chat--color-light-shade-100: #dbe7f5;\n\n  --chat--color-medium: #d6deea;\n  --chat--color-dark: #4b5c74;\n  --chat--color-disabled: #dbe2ec;\n  --chat--color-typing: #6c7a89;\n\n  /* layout */\n  --chat--spacing: 1rem;\n  --chat--border-radius: 1rem;\n  --chat--transition-duration: 0.2s;\n  --chat--font-family: 'Segoe UI', sans-serif;\n\n  /* window */\n  --chat--window--width: 380px;\n  --chat--window--height: 600px;\n  --chat--window--border-radius: 1.3rem;\n  --chat--window--border: none;\n\n  /* header */\n  --chat--header--background: linear-gradient(135deg,#74b9ff,#a29bfe);\n  --chat--header--color: white;\n  --chat--header--padding: 1.2rem;\n\n  --chat--heading--font-size: 1.25rem;\n\n  /* body */\n  --chat--body--background: #f4f8ff;\n  --chat--footer--background: #f4f8ff;\n\n  /* message bubble */\n  --chat--message--font-size: 0.95rem;\n  --chat--message--padding: 0.8rem 1rem;\n  --chat--message--border-radius: 1rem;\n  --chat--message--margin-bottom: 0.7rem;\n\n  /* bot bubble */\n  --chat--message--bot--background: #ffffff;\n  --chat--message--bot--color: #4b5c74;\n\n  /* user bubble */\n  --chat--message--user--background: #74b9ff;\n  --chat--message--user--color: white;\n\n  --chat--message--pre--background: #eef3fb;\n\n  /* toggle button */\n  --chat--toggle--size: 60px;\n  --chat--toggle--background: linear-gradient(135deg,#74b9ff,#a29bfe);\n  --chat--toggle--hover--background: #63aaf5;\n  --chat--toggle--active--background: #4d96e6;\n  --chat--toggle--color: white;\n\n  /* input */\n  --chat--textarea--height: 50px;\n  --chat--input--background: white;\n  --chat--input--border-radius: 1rem;\n  --chat--input--padding: 0.7rem;\n  --chat--input--text-color: #4b5c74;\n\n  /* button */\n  --chat--button--border-radius: 0.8rem;\n\n  --chat--button--background--primary: #74b9ff;\n  --chat--button--background--primary--hover: #63aaf5;\n\n  --chat--button--background--secondary: #a29bfe;\n  --chat--button--background--secondary--hover: #918af5;\n\n  /* send icon */\n  --chat--input--send--button--color: #74b9ff;\n  --chat--input--send--button--color-hover: #a29bfe;\n}\n\n\n/* bubble aesthetic */\n.n8n-chat .chat-message {\n  max-width: 70%;\n  box-shadow: 0 3px 10px rgba(0,0,0,0.05);\n  transition: 0.2s;\n}\n\n/* header gradient fix */\n.n8n-chat .chat-header {\n  background: linear-gradient(135deg,#74b9ff,#a29bfe) !important;\n}\n\n/* user bubble */\n.n8n-chat .chat-message-user {\n  background: #74b9ff !important;\n  color: white !important;\n}\n\n/* bot bubble */\n.n8n-chat .chat-message-bot {\n  background: white !important;\n}\n\n/* glass effect */\n.n8n-chat .chat-window {\n  backdrop-filter: blur(6px);\n  box-shadow: 0 8px 25px rgba(0,0,0,0.08);\n}\n\n/* input separator */\n.n8n-chat .chat-input {\n  border-top: 1px solid #e3ebf7;\n}\n\n/* send button animation */\n.n8n-chat .chat-send-button:hover {\n  transform: scale(1.08);\n  transition: 0.2s;\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        32,
+        208
+      ],
+      "id": "83696032-0831-48fb-aae9-eec167bc8021",
+      "name": "When chat message received",
+      "webhookId": "95d43850-12da-428b-8cc0-3bf0e9e971d6"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1FjNZaHfGzLiXONQeinZLzadPVX76pUprpvO8TjcdsDM",
+          "mode": "list",
+          "cachedResultName": "n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FjNZaHfGzLiXONQeinZLzadPVX76pUprpvO8TjcdsDM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FjNZaHfGzLiXONQeinZLzadPVX76pUprpvO8TjcdsDM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        448,
+        400
+      ],
+      "id": "2301bbe8-7709-4728-a52a-9adeea3adf52",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2bssESrsNf55vG6X",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7e789d22-5646-4980-b4a5-a3484ed96710",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "94e417dcf5f973d4e19006fc6970012180f80c5acde6b4ce80348d8168a83c52"
+  },
+  "id": "oxqUDzgq9ClkgYwc",
+  "tags": []
+}
