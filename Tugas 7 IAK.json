@@ -1,0 +1,272 @@
+{
+  "name": "Tugas 7 IAK",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst today = new Date();\ntoday.setHours(23, 59, 59, 999); // inklusif hari ini sampai akhir hari\n\nconst sevenDaysAgo = new Date();\nsevenDaysAgo.setDate(today.getDate() - 7);\nsevenDaysAgo.setHours(0, 0, 0, 0);\n\nlet weeklyExpenses = [];\nlet formattedString = \"Data pengeluaran saya minggu ini:\\n\";\nlet hasExpenses = false;\n\nfor (const item of items) {\n  const rawTanggal = item.json.Tanggal; // format: \"13/04/2026\"\n  \n  // Parse manual DD/MM/YYYY → YYYY-MM-DD agar valid di semua engine\n  const [day, month, year] = rawTanggal.split(\"/\");\n  const expenseDate = new Date(`${year}-${month}-${day}`);\n\n  if (expenseDate >= sevenDaysAgo && expenseDate <= today) {\n    weeklyExpenses.push(item.json);\n    formattedString += `- ${item.json.Deskripsi}: Rp${item.json[\"Jumlah (IDR)\"]}\\n`;\n    hasExpenses = true;\n  }\n}\n\nreturn [{\n  json: {\n    promptData: formattedString,\n    hasExpenses: hasExpenses\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -832,
+        224
+      ],
+      "id": "3d5cbac8-c454-4756-a3c1-de9dd8644160",
+      "name": "Filter 7 hari & format teks"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17NpA8r_XxPK4sJBj6K3Jgh8w7sCJFr5YP58FiVkwFrs",
+          "mode": "list",
+          "cachedResultName": "Data Dummy Catatan Keuangan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17NpA8r_XxPK4sJBj6K3Jgh8w7sCJFr5YP58FiVkwFrs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17NpA8r_XxPK4sJBj6K3Jgh8w7sCJFr5YP58FiVkwFrs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1040,
+        224
+      ],
+      "id": "da99165a-76b0-4882-8aa6-fb5763018261",
+      "name": "Ambil log pengeluaran",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "In57SnjbPFzwMmgd",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1248,
+        224
+      ],
+      "id": "2f6cbe8b-6fb1-4509-a6ba-b690df03fb9d",
+      "name": "Setiap hari minggu"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fb256ed6-2347-422b-a4e9-fd079c6c29dc",
+              "leftValue": "={{ $node[\"Filter 7 hari & format teks\"].json.hasExpenses }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -624,
+        224
+      ],
+      "id": "e0c86767-5424-41fb-a2d8-f2a1b0b1c602",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "1342204029",
+        "text": "Tidak ditemukan log pengeluaran untuk 7 hari terakhir. Tidak ada analisis AI yang dibuat.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        320
+      ],
+      "id": "d86157c7-90fc-48cf-9b1d-7e6f9d3c1ee7",
+      "name": "Pesan false",
+      "webhookId": "81c94770-4ab0-4ad2-b24e-40c271b83e88",
+      "credentials": {
+        "telegramApi": {
+          "id": "7gLxyhPWtvLiMZN9",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1342204029",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "401ad919-b2e6-4de0-b89e-06b3991f79ba",
+      "name": "Pesan true",
+      "webhookId": "604c8abd-0db0-479b-82b9-2ec0d9371224",
+      "credentials": {
+        "telegramApi": {
+          "id": "7gLxyhPWtvLiMZN9",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $node[\"Filter 7 hari & format teks\"].json.promptData }} (Notes: sesuaikan dengan nama nodes kalian).\n\n---\nInstruksi: \"Tulis ringkasan kebiasaan belanja saya minggu ini dan beri 1 saran penghematan.\"\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -432,
+        0
+      ],
+      "id": "2a7f69f7-8a7b-4eae-9a14-2498c3482033",
+      "name": "Analisis pengeluaran mingguan"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        160
+      ],
+      "id": "352af481-d1e7-4bc5-83a4-0d2890466e81",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "vVdwOqYXn8bG0i8e",
+          "name": "Groq account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Ambil log pengeluaran": {
+      "main": [
+        [
+          {
+            "node": "Filter 7 hari & format teks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Setiap hari minggu": {
+      "main": [
+        [
+          {
+            "node": "Ambil log pengeluaran",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter 7 hari & format teks": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Analisis pengeluaran mingguan",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pesan false",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisis pengeluaran mingguan": {
+      "main": [
+        [
+          {
+            "node": "Pesan true",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analisis pengeluaran mingguan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c22bea60-eb9c-463e-9200-5c1fb5f96810",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "94e417dcf5f973d4e19006fc6970012180f80c5acde6b4ce80348d8168a83c52"
+  },
+  "id": "VJcGqizF2PtCAMDP",
+  "tags": []
+}
