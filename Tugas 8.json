@@ -1,0 +1,383 @@
+{
+  "name": "Tugas 8",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        -80
+      ],
+      "id": "210cc1c0-a0aa-475c-91aa-f1713ba57610",
+      "name": "Setiap 15 menit"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1XSNc1d8cU_obI7wCzqYbwddGaer8N_RsveY9UiDbXBo",
+          "mode": "list",
+          "cachedResultName": "$BTC dan $ETH Sentimen Media Sosial",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XSNc1d8cU_obI7wCzqYbwddGaer8N_RsveY9UiDbXBo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Data Mentah",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XSNc1d8cU_obI7wCzqYbwddGaer8N_RsveY9UiDbXBo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toFormat(\"yyyy-MM-dd HH:mm:ss\") }}",
+            "Sentiment": "={{ $json.text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sentiment",
+              "displayName": "Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        -80
+      ],
+      "id": "257ab35a-f0f4-4aec-930a-8c1fea3852b8",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "In57SnjbPFzwMmgd",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Ambil semua baris dari node \"Google Sheets\"\n// **Pastikan nama node Anda adalah \"Google Sheets\"**\nconst items = $items(\"Baca data\");\n\nlet positive = 0;\nlet negative = 0;\nlet neutral = 0;\nlet total = 0;\n\n// Loop melalui setiap baris\nfor (const item of items) {\n  // Ambil nilai dari kolom \"Sentiment\"\n  const sentiment = item.json.Sentiment;\n  \n  if (sentiment === 'Positive') {\n    positive++;\n  } else if (sentiment === 'Negative') {\n    negative++;\n  } else if (sentiment === 'Neutral') {\n    neutral++;\n  }\n}\n\ntotal = items.length;\n\n// Kembalikan hasil perhitungan\nreturn {\n  total_tweets: total,\n  sentimen_positif: positive,\n  sentimen_negatif: negative,\n  sentimen_netral: neutral\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        272
+      ],
+      "id": "179f169e-5c00-40db-b04a-9ce65023bf6f",
+      "name": "Analisis data"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XSNc1d8cU_obI7wCzqYbwddGaer8N_RsveY9UiDbXBo",
+          "mode": "list",
+          "cachedResultName": "$BTC dan $ETH Sentimen Media Sosial",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XSNc1d8cU_obI7wCzqYbwddGaer8N_RsveY9UiDbXBo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Data Mentah",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XSNc1d8cU_obI7wCzqYbwddGaer8N_RsveY9UiDbXBo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        272
+      ],
+      "id": "36aafbc8-4e12-4001-88c1-e668659eb8d1",
+      "name": "Baca data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "In57SnjbPFzwMmgd",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        272
+      ],
+      "id": "2e002942-225a-43ea-baab-56a8ff96cccc",
+      "name": "Tiap jam 7 pagi"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Anda adalah seorang analis sentimen media sosial.\nTuliskan kesimpulan singkat (dalam bahasa Indonesia) untuk laporan Telegram, berdasarkan data berikut:\n\n- Total Tweet Dianalisis: {{ $json.total_tweets }}\n- Sentimen Positif: {{ $json.sentimen_positif }}\n- Sentimen Negatif: {{ $json.sentimen_negatif }}\n- Sentimen Netral: {{ $json.sentimen_netral }}\n\nBerikan ringkasan singkat tentang apa arti angka-angka ini (misalnya, \"Sentimen hari ini cenderung positif,\" \"Ada banyak keraguan di pasar,\" dll.).\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        672,
+        272
+      ],
+      "id": "c60a5a03-1be5-42b0-a1e3-387d95dfc12a",
+      "name": "Membuat kesimpulan"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the sentiment of the following tweet. Respond ONLY with ONE word: 'Positive', 'Negative', or 'Neutral'.\n\nTweet:\n{{ $json.text }}\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        480,
+        -80
+      ],
+      "id": "9b74d8ad-8738-4514-93d4-78cd587b411b",
+      "name": "Analisis sentimen"
+    },
+    {
+      "parameters": {
+        "chatId": "1342204029",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        272
+      ],
+      "id": "6f3721be-c1bc-468a-905f-9eb0970bbd17",
+      "name": "Kirim laporan",
+      "webhookId": "fa89673d-8a54-4f1e-8dd3-cabde695c43f",
+      "credentials": {
+        "telegramApi": {
+          "id": "7gLxyhPWtvLiMZN9",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "87f5fc15-367e-45ab-8155-3f658c67f2f1",
+              "name": "text",
+              "value": "={\n  \"BTC\": {\n    \"total\": 90,\n    \"bullish\": 33,\n    \"bearish\": 31,\n    \"neutral\": 26,\n    \"avg_compound\": 0.0039,\n    \"signal\": \"NEUTRAL\",\n    \"scraped_at\": \"2026-04-22T03:43:03.694651\"\n  },\n  \"ETH\": {\n    \"total\": 77,\n    \"bullish\": 31,\n    \"bearish\": 33,\n    \"neutral\": 13,\n    \"avg_compound\": -0.042,\n    \"signal\": \"NEUTRAL\",\n    \"scraped_at\": \"2026-04-22T03:43:03.695098\"\n  }\n}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        -80
+      ],
+      "id": "9b3b436e-e846-4f63-9780-b7a6a7f5b423",
+      "name": "Data scraping"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        480,
+        96
+      ],
+      "id": "73931a74-483f-4218-8670-b914e63ec3f4",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "vVdwOqYXn8bG0i8e",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        672,
+        464
+      ],
+      "id": "406fa5ed-941d-4020-98bc-1177830d7b0e",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "vVdwOqYXn8bG0i8e",
+          "name": "Groq account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Setiap 15 menit": {
+      "main": [
+        [
+          {
+            "node": "Data scraping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisis data": {
+      "main": [
+        [
+          {
+            "node": "Membuat kesimpulan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baca data": {
+      "main": [
+        [
+          {
+            "node": "Analisis data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tiap jam 7 pagi": {
+      "main": [
+        [
+          {
+            "node": "Baca data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Membuat kesimpulan": {
+      "main": [
+        [
+          {
+            "node": "Kirim laporan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisis sentimen": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data scraping": {
+      "main": [
+        [
+          {
+            "node": "Analisis sentimen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analisis sentimen",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Membuat kesimpulan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d7d3a87e-8ca5-4005-b4db-316b37659984",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "94e417dcf5f973d4e19006fc6970012180f80c5acde6b4ce80348d8168a83c52"
+  },
+  "id": "XeLhqkBj25M5uc7J",
+  "tags": []
+}
