@@ -1,0 +1,286 @@
+{
+  "name": "Tugas 4 IAMS",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -800,
+        -32
+      ],
+      "id": "d8545d46-9954-4254-9245-52e3e55b4120",
+      "name": "Telegram Trigger",
+      "webhookId": "48eeae20-5266-4457-9d68-022832702485",
+      "credentials": {
+        "telegramApi": {
+          "id": "7gLxyhPWtvLiMZN9",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1087516f-f43b-47c3-b74c-df546dbbff00",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "Bagaimana prosedur reimbursement?",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "56e24b50-35bf-4bc4-988e-e925d453cd1a",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "Prosedur pengajuan cuti bulanan",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "270e0e5b-f051-4a5e-9a5d-7bd515027a3d",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "Bagaimana aturan lembur di perusahaan?",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "d6391b7c-ccb5-4efe-b96e-640cf1d3b350",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "Apa syarat klaim asuransi kesehatan?",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "62189194-6ff4-4ff6-b3bc-c6226e316834",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "Bagaimana prosedur permintaan alat kerja baru?",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -624,
+        -32
+      ],
+      "id": "4a56cda9-e489-4201-8371-3a76d64b2ca3",
+      "name": "Memastikan sesuai format"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.from.id }}",
+        "text": "=Pertanyaan yang Anda kirimkan tidak sesuai, harap gunakan pertanyaan dibawah ini:\n1. Bagaimana prosedur reimbursement?\n2. Prosedur pengajuan cuti tahunan\n3. Bagaimana aturan lembur di perusahaan?\n4. Apa syarat klaim asuransi kesehatan?\n5. Bagaimana prosedur permintaan alat kerja baru?",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -448,
+        80
+      ],
+      "id": "47ba4888-4d82-4561-aacb-0c4b0e0d375b",
+      "name": "False Output",
+      "webhookId": "843fba2f-72d5-4789-bdb8-4de2728ad8a6",
+      "credentials": {
+        "telegramApi": {
+          "id": "7gLxyhPWtvLiMZN9",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Anda adalah SOP AI Agent.\n\nATURAN KERAS:\n- Anda WAJIB menggunakan TOOL \"Data Pertanyaan\" sebelum menjawab.\n- Jawaban HARUS diambil dari hasil tool.\n- DILARANG menggunakan pengetahuan umum.\n- Jika data tidak ditemukan, jawab: \"Maaf, informasi tersebut tidak tersedia di SOP.\"\n\nPertanyaan pengguna:\n{{ $node[\"Telegram Trigger\"].json.message.text }}\n\nJawaban berdasarkan SOP:",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -224,
+        -48
+      ],
+      "id": "e04d69a9-51ae-48d5-b130-e8d33c40dd8a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        112
+      ],
+      "id": "c5fca93a-576b-4844-8719-1bf51d8fed14",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "vVdwOqYXn8bG0i8e",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1xcvQ0dWv8zENkru8X9CeMn8bvErLz3EqeLp0xgI9pmw",
+          "mode": "list",
+          "cachedResultName": "Data Pertanyaan untuk Karyawan",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xcvQ0dWv8zENkru8X9CeMn8bvErLz3EqeLp0xgI9pmw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xcvQ0dWv8zENkru8X9CeMn8bvErLz3EqeLp0xgI9pmw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -80,
+        128
+      ],
+      "id": "d8632593-bee7-4356-8810-118e1629f853",
+      "name": "Data Pertanyaan",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "rpze2FpueflmUVjp",
+          "name": "Google Sheets account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        -48
+      ],
+      "id": "8c4d5514-f8eb-4d34-a3db-bf0ef5c52667",
+      "name": "True Output",
+      "webhookId": "a1781874-88ec-4059-a6dd-242313fbe02c",
+      "credentials": {
+        "telegramApi": {
+          "id": "7gLxyhPWtvLiMZN9",
+          "name": "Telegram account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Memastikan sesuai format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memastikan sesuai format": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "False Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data Pertanyaan": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "True Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b748c81e-261d-43ce-95a1-506a3c6e924e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "94e417dcf5f973d4e19006fc6970012180f80c5acde6b4ce80348d8168a83c52"
+  },
+  "id": "nzmNj3DAf3ANyabm",
+  "tags": []
+}
